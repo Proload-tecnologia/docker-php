@@ -1,0 +1,8 @@
+* text=auto
+
+*.sh text eol=lf
+*.crontab text eol=lf
+*.md diff=markdown
+
+/.github export-ignore
+CHANGELOG.md export-ignore
