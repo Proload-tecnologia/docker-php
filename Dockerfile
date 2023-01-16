@@ -51,6 +51,7 @@ RUN set -eux; \
         acl \
         ca-certificates \
         curl \
+        ffmpeg \
         less \
         npm \
         openssl \
