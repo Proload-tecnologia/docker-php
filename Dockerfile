@@ -28,9 +28,8 @@ RUN set -eux; \
         sockets \
         zip \
     ; \
-    pecl install xdebug; \
     pecl install -D "$PHPREDIS_CFLAGS" redis; \
-    docker-php-ext-enable xdebug redis; \
+    docker-php-ext-enable redis; \
     php -r "readfile('http://getcomposer.org/installer');" | php -- \
         --install-dir=/usr/bin/ \
         --filename=composer \
