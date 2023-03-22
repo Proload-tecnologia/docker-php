@@ -13,6 +13,10 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        php_version: ["", "8", "8.1"]
+
     permissions:
       contents: read
       packages: write
@@ -42,13 +46,19 @@ jobs:
         run: |
           echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
-      - name: Build and load image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          file: ${{ env.DOCKERFILE }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          platforms: linux/amd64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Testing matrix
+        run: |
+          echo "Tag: $TAG"
+        env:
+          TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.php_version }}
+
+      # - name: Build and load image
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     push: true
+      #     file: ${{ env.DOCKERFILE }}
+      #     tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      #     platforms: linux/amd64
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
