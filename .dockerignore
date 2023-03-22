@@ -1,2 +1,8 @@
 LICENSE
 README.md
+.git
+.github
+.gitignore
+.gitattributes
+.editorconfig
+Dockerfile

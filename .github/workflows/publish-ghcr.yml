@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        php_version: ["", "8", "8.1"]
+        image_tag: ["", ":8", ":8.1"]
 
     permissions:
       contents: read
@@ -24,6 +24,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Lowercase repository name for image
+        run: |
+          echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
       # Add support for more platforms with QEMU (optional)
       # https://github.com/docker/setup-qemu-action
@@ -42,23 +46,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Prepare lowercase repository name for image
-        run: |
-          echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
-
-      - name: Testing matrix
-        run: |
-          echo "Tag: $TAG"
-        env:
-          TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.php_version }}
-
-      # - name: Build and load image
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     push: true
-      #     file: ${{ env.DOCKERFILE }}
-      #     tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      #     platforms: linux/amd64
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
+      - name: Build and load image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          file: ${{ env.DOCKERFILE }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}${{ matrix.image_tag }}
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
